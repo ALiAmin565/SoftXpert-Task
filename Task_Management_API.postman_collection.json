@@ -1,0 +1,469 @@
+{
+	"info": {
+		"_postman_id": "task-management-api-collection",
+		"name": "Task Management API",
+		"description": "RESTful API for Task Management System with JWT Authentication and Role-based Access Control",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test User\",\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"role\": \"user\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "Login Manager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('jwt_token', response.authorization.token);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"manager@softxpert.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('jwt_token', response.authorization.token);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"alice@softxpert.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "me"]
+						}
+					}
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('jwt_token', response.authorization.token);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/refresh",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "refresh"]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "logout"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "Get All Tasks",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tasks",
+							"host": ["{{base_url}}"],
+							"path": ["tasks"]
+						}
+					}
+				},
+				{
+					"name": "Get Tasks with Filters",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tasks?status=pending&due_date_from=2024-01-01&due_date_to=2024-12-31&assigned_user=3",
+							"host": ["{{base_url}}"],
+							"path": ["tasks"],
+							"query": [
+								{
+									"key": "status",
+									"value": "pending"
+								},
+								{
+									"key": "due_date_from",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "due_date_to",
+									"value": "2024-12-31"
+								},
+								{
+									"key": "assigned_user",
+									"value": "3"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Task (Manager Only)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"New Task\",\n    \"description\": \"This is a new task created via API\",\n    \"due_date\": \"2024-12-31\",\n    \"assigned_to\": 3,\n    \"dependencies\": [1, 2]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks",
+							"host": ["{{base_url}}"],
+							"path": ["tasks"]
+						}
+					}
+				},
+				{
+					"name": "Get Task Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tasks/1",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Task Status (User)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"in_progress\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks/3",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "3"]
+						}
+					}
+				},
+				{
+					"name": "Update Task (Manager)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Updated Task Title\",\n    \"description\": \"Updated description\",\n    \"status\": \"in_progress\",\n    \"due_date\": \"2024-12-31\",\n    \"assigned_to\": 4,\n    \"dependencies\": [1]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks/5",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "5"]
+						}
+					}
+				},
+				{
+					"name": "Add Task Dependencies",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"dependencies\": [1, 2]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks/6/dependencies",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "6", "dependencies"]
+						}
+					}
+				},
+				{
+					"name": "Get Dependency Chain (Debug Circular Dependencies)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tasks/4/dependency-chain",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "4", "dependency-chain"]
+						}
+					}
+				},
+				{
+					"name": "Remove Task Dependencies",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"dependencies\": [1, 2]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks/6/dependencies",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "6", "dependencies"]
+						}
+					}
+				},
+				{
+					"name": "Remove All Task Dependencies",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tasks/6/dependencies/all",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "6", "dependencies", "all"]
+						}
+					}
+				},
+				{
+					"name": "Delete Task (Manager Only)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tasks/10",
+							"host": ["{{base_url}}"],
+							"path": ["tasks", "10"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/health",
+					"host": ["{{base_url}}"],
+					"path": ["health"]
+				}
+			}
+		}
+	]
+}
