@@ -43,7 +43,7 @@ A robust RESTful API for task management with JWT authentication, role-based acc
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/ALiAmin565/SoftXpert-Task.git
 cd Softxpert-Task
 ```
 
